@@ -1,0 +1,281 @@
+from __future__ import annotations
+from tokenizer import Tokenizer, Token, TokenType
+
+
+class NumLit:
+    def __init__(self, value: int) -> None:
+        self.value = value
+
+    def __repr__(self) -> str:
+        return f"NumLit({self.value})"
+
+
+class StrLit:
+    def __init__(self, value: str) -> None:
+        self.value = value
+
+    def __repr__(self) -> str:
+        return f'StrLit("{self.value}")'
+
+
+class VarLit:
+    def __init__(self, name: str) -> None:
+        self.name = name
+
+    def __repr__(self) -> str:
+        return f"VarLit({self.name})"
+
+
+class Op:
+    def __init__(self, op: str, args: list) -> None:
+        self.op = op
+        self.args = args
+
+    def __repr__(self) -> str:
+        return f"Op({self.op}, {self.args})"
+
+
+class IfExpr:
+    def __init__(self, cond: object, then: object, else_: object) -> None:
+        self.cond = cond
+        self.then = then
+        self.else_ = else_
+
+    def __repr__(self) -> str:
+        return f"IfExpr({self.cond}, {self.then}, {self.else_})"
+
+
+class Setq:
+    def __init__(self, name: str, value: object) -> None:
+        self.name = name
+        self.value = value
+
+    def __repr__(self) -> str:
+        return f"Setq({self.name}, {self.value})"
+
+
+class Defun:
+    def __init__(self, name: str, args: list, body: object) -> None:
+        self.name = name
+        self.args = args
+        self.body = body
+
+    def __repr__(self) -> str:
+        return f"Defun({self.name}, {self.args}, {self.body})"
+
+
+class FuncCall:
+    def __init__(self, name: str, args: list) -> None:
+        self.name = name
+        self.args = args
+
+    def __repr__(self) -> str:
+        return f"FuncCall({self.name}, {self.args})"
+
+
+class Print:
+    def __init__(self, value: object) -> None:
+        self.value = value
+
+    def __repr__(self) -> str:
+        return f"Print({self.value})"
+
+
+class Read:
+    def __repr__(self) -> str:
+        return "Read()"
+
+
+class LoopExpr:
+    def __init__(self, var: str, start: object, end: object, body: object) -> None:
+        self.var = var
+        self.start = start
+        self.end = end
+        self.body = body
+
+    def __repr__(self) -> str:
+        return f"LoopExpr({self.var}, {self.start}, {self.end}, {self.body})"
+
+
+
+class ParseError(Exception):
+    def __init__(self, msg: str, line: int) -> None:
+        super().__init__(f"Parse error on line {line}: {msg}")
+
+
+
+class Parser:
+    def __init__(self, tokenizer: Tokenizer) -> None:
+        self.tokenizer = tokenizer
+        print("======= Tokens ======")
+        self.current: Token = self._next()
+
+
+    def _next(self) -> Token:
+        tok = self.tokenizer.get_next_token()
+        while tok.token_type == TokenType.SPACE:
+            tok = self.tokenizer.get_next_token()
+        print(tok)
+        return tok
+
+    def _advance(self) -> Token:
+        tok = self.current
+        self.current = self._next()
+        return tok
+
+    def _expect(self, token_type: TokenType) -> Token:
+        if self.current.token_type != token_type:
+            raise ParseError(
+                f"expected {token_type.name} but got {self.current.token_type.name}",
+                self.current.line
+            )
+        return self._advance()
+    
+
+    # === парсинг выражения ===
+
+    def parse_expr(self):
+        tok = self.current
+
+        if tok.token_type == TokenType.NUM_LIT:
+            self._advance()
+            return NumLit(int(tok.value))
+
+        if tok.token_type == TokenType.STR_LIT:
+            self._advance()
+            return StrLit(tok.value)
+
+        if tok.token_type == TokenType.VAR_LIT:
+            self._advance()
+            return VarLit(tok.value)
+
+        if tok.token_type == TokenType.L_PAR:
+            return self.parse_list()
+
+        raise ParseError(
+            f"unexpected token {tok.token_type.name}",
+            tok.line
+        )
+
+    # === парсинг списка ===
+
+    def parse_list(self):
+        self._expect(TokenType.L_PAR)
+        tok = self.current
+
+        if tok.token_type == TokenType.IF:
+            return self.parse_if()
+        if tok.token_type == TokenType.SETQ:
+            return self.parse_setq()
+        if tok.token_type == TokenType.DEFUN:
+            return self.parse_defun()
+        if tok.token_type == TokenType.PRINT:
+            return self.parse_print()
+        if tok.token_type == TokenType.READ:
+            return self.parse_read()
+        if tok.token_type == TokenType.LOOP:
+            return self.parse_loop()
+        if tok.token_type in (
+            TokenType.PLUS, TokenType.MINUS,
+            TokenType.MUL, TokenType.DIV,
+            TokenType.EQ, TokenType.NEQ,
+            TokenType.LT, TokenType.GT
+        ):
+            return self.parse_op()
+        # переменная на первом месте списка → вызов функции: (foo 1 2)
+        if tok.token_type == TokenType.VAR_LIT:
+            return self.parse_funccall()
+
+        raise ParseError(
+            f"unknown expression head: {tok.token_type.name}",
+            tok.line
+        )
+
+    # === парсеры конструкций ===
+
+    def parse_if(self):
+        self._expect(TokenType.IF)
+        cond = self.parse_expr()
+        then = self.parse_expr()
+        else_ = self.parse_expr()
+        self._expect(TokenType.R_PAR)
+        return IfExpr(cond, then, else_)
+
+    def parse_setq(self):
+        self._expect(TokenType.SETQ)
+        name = self._expect(TokenType.VAR_LIT).value
+        value = self.parse_expr()
+        self._expect(TokenType.R_PAR)
+        return Setq(name, value)
+
+    def parse_defun(self):
+        self._expect(TokenType.DEFUN)
+        name = self._expect(TokenType.VAR_LIT).value
+
+        self._expect(TokenType.L_PAR)
+        args = []
+        while self.current.token_type != TokenType.R_PAR:
+            args.append(self._expect(TokenType.VAR_LIT).value)
+        self._expect(TokenType.R_PAR)
+
+        body = self.parse_expr()
+        self._expect(TokenType.R_PAR)
+        return Defun(name, args, body)
+
+    def parse_print(self):
+        self._expect(TokenType.PRINT)
+        value = self.parse_expr()
+        self._expect(TokenType.R_PAR)
+        return Print(value)
+
+    def parse_read(self):
+        self._expect(TokenType.READ)
+        self._expect(TokenType.R_PAR)
+        return Read()
+
+    def parse_op(self):
+        op_tok = self._advance()
+        op = op_tok.value
+
+        # - и / требуют ровно двух аргументов (бинарные)
+        if op_tok.token_type in (TokenType.MINUS, TokenType.DIV):
+            left = self.parse_expr()
+            right = self.parse_expr()
+            self._expect(TokenType.R_PAR)
+            return Op(op, [left, right])
+
+        # + * = < > /= — принимают любое количество аргументов
+        args = []
+        while self.current.token_type != TokenType.R_PAR:
+            args.append(self.parse_expr())
+        self._expect(TokenType.R_PAR)
+        return Op(op, args)
+
+    def parse_funccall(self):
+        name = self._expect(TokenType.VAR_LIT).value
+        args = []
+        while self.current.token_type != TokenType.R_PAR:
+            args.append(self.parse_expr())
+        self._expect(TokenType.R_PAR)
+        return FuncCall(name, args)
+
+    def parse_loop(self):
+        self._expect(TokenType.LOOP)
+        self._expect(TokenType.FOR)
+        var = self._expect(TokenType.VAR_LIT).value
+        self._expect(TokenType.FROM)
+        start = self.parse_expr()
+        self._expect(TokenType.TO)
+        end = self.parse_expr()
+        self._expect(TokenType.DO)
+        body = self.parse_expr()
+        self._expect(TokenType.R_PAR)
+        return LoopExpr(var, start, end, body)
+
+    # === точка входа ===
+
+    def parse(self):
+        exprs = []
+        while self.current.token_type != TokenType.EOF:
+            exprs.append(self.parse_expr())
+        return exprs
