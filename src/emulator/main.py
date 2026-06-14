@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from src.emulator.cu import format_log_excerpt, run_emulator, load_binary, load_data_binary
+from src.emulator.cu import format_log_excerpt, load_binary, load_data_binary, run_emulator
 
 
 def main() -> None:
@@ -18,10 +18,9 @@ def main() -> None:
     input_path = Path(sys.argv[3])
     output_path = Path(sys.argv[4])
     log_path = Path(sys.argv[5]) if len(sys.argv) > 5 else None
-    result = run_emulator(text_bin, data_bin, input_text)
 
     input_text = input_path.read_text(encoding="utf-8") if input_path.exists() else ""
-
+    result = run_emulator(text_bin, data_bin, input_text)
 
     output_path.write_text(result.output, encoding="utf-8")
     if log_path:

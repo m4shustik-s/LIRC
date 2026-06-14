@@ -27,17 +27,6 @@ class MUX:
         return self.val.get(name, 0)
 
 
-class DEMUX:
-    def __init__(self) -> None:
-        self.val: int = 0
-
-    def in_(self, val: int) -> None:
-        self.val = val
-
-    def sel_(self) -> int:
-        return self.val
-
-
 class Summator:
     def __init__(self) -> None:
         self.val: int = 0
@@ -58,12 +47,6 @@ class Registers:
 
     def set(self, num: int, val: int) -> None:
         self.registers[num] = val & 0xFFFFFFFF
-
-    def latch_left_reg_(self, num: int) -> int:
-        return self.get(num)
-
-    def latch_right_reg_(self, num: int) -> int:
-        return self.get(num)
 
 
 class Register:
@@ -157,22 +140,3 @@ class ALU:
             result = op_type.value(self.left_input, self.right_input)
             return int(result) & 0xFFFFFFFF
         return 0
-
-
-class LoadStoreUnit:
-    def __init__(self, data_memory: DataMemory) -> None:
-        self.data = data_memory
-        self.address: int = 0
-        self.reg_value: int = 0
-
-    def set_reg(self, reg: int) -> None:
-        self.reg_value = reg
-
-    def set_address(self, address: int) -> None:
-        self.address = address
-
-    def store_(self) -> None:
-        self.data.write_word(self.address, self.reg_value)
-
-    def load_(self) -> int:
-        return self.data.read_word(self.address)
