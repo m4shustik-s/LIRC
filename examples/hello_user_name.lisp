@@ -1,0 +1,5 @@
+(print "What is your name?")
+(setq name (read))
+(print "Hello, ")
+(print name)
+(print "!")

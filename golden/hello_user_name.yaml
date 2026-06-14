@@ -1,0 +1,265 @@
+in_source: '(print "What is your name?")
+
+  (setq name (read))
+
+  (print "Hello, ")
+
+  (print name)
+
+  (print "!")
+
+  '
+in_stdin: 'Alice
+
+  '
+out_code_asm: '.text
+
+  main:
+
+  ADDI $sp, $zero, 4000
+
+  ADDI $gp, $zero, 0
+
+  ADDI $a0, $zero, 256
+
+  PRINTS $a0
+
+  LW $t0, 32516($zero)
+
+  BEQ $t0, $zero, read_empty_1
+
+  ADDI $v0, $zero, 0
+
+  SW $v0, 1024($gp)
+
+  ADDI $t1, $zero, 2052
+
+  SW $t1, 1028($gp)
+
+  read_char_2:
+
+  LW $t0, 32516($zero)
+
+  BEQ $t0, $zero, read_end_3
+
+  LW $t0, 32520($zero)
+
+  ADDI $t1, $t0, -10
+
+  BEQ $t1, $zero, read_end_3
+
+  LW $t1, 1028($gp)
+
+  SW $t0, 0($t1)
+
+  LW $t1, 1028($gp)
+
+  ADDI $t1, $t1, 4
+
+  SW $t1, 1028($gp)
+
+  LW $t0, 1024($gp)
+
+  ADDI $t0, $t0, 1
+
+  SW $t0, 1024($gp)
+
+  J read_char_2
+
+  read_end_3:
+
+  LW $t0, 1024($gp)
+
+  SW $t0, 2048($gp)
+
+  ADDI $v0, $zero, 2048
+
+  J read_done_0
+
+  read_empty_1:
+
+  ADDI $v0, $zero, 0
+
+  SW $v0, 2048($gp)
+
+  ADDI $v0, $zero, 2048
+
+  read_done_0:
+
+  SW $v0, 1032($gp)
+
+  ADDI $a0, $zero, 332
+
+  PRINTS $a0
+
+  LW $a0, 1032($gp)
+
+  PRINTS $a0
+
+  ADDI $a0, $zero, 364
+
+  PRINTS $a0
+
+  HALT
+
+
+  .data
+
+  str_0: .pascal "What is your name?"  # @0x100
+
+  str_1: .pascal "Hello, "  # @0x14C
+
+  str_2: .pascal "!"  # @0x16C'
+out_code_hex: '00000000 - 201D0FA0 - addi $29, 4000($0)
+
+  00000004 - 201C0000 - addi $28, 0($0)
+
+  00000008 - 20040100 - addi $4, 256($0)
+
+  0000000C - C0800000 - prints $4
+
+  00000010 - 8C087F04 - lw $8, 32516($0)
+
+  00000014 - 11000016 - beq $0, 22($8)
+
+  00000018 - 20020000 - addi $2, 0($0)
+
+  0000001C - AF820400 - sw $2, 1024($28)
+
+  00000020 - 20090804 - addi $9, 2052($0)
+
+  00000024 - AF890404 - sw $9, 1028($28)
+
+  00000028 - 8C087F04 - lw $8, 32516($0)
+
+  0000002C - 1100000C - beq $0, 12($8)
+
+  00000030 - 8C087F08 - lw $8, 32520($0)
+
+  00000034 - 2109FFF6 - addi $9, -10($8)
+
+  00000038 - 11200009 - beq $0, 9($9)
+
+  0000003C - 8F890404 - lw $9, 1028($28)
+
+  00000040 - AD280000 - sw $8, 0($9)
+
+  00000044 - 8F890404 - lw $9, 1028($28)
+
+  00000048 - 21290004 - addi $9, 4($9)
+
+  0000004C - AF890404 - sw $9, 1028($28)
+
+  00000050 - 8F880400 - lw $8, 1024($28)
+
+  00000054 - 21080001 - addi $8, 1($8)
+
+  00000058 - AF880400 - sw $8, 1024($28)
+
+  0000005C - 0800000A - j 10
+
+  00000060 - 8F880400 - lw $8, 1024($28)
+
+  00000064 - AF880800 - sw $8, 2048($28)
+
+  00000068 - 20020800 - addi $2, 2048($0)
+
+  0000006C - 0800001F - j 31
+
+  00000070 - 20020000 - addi $2, 0($0)
+
+  00000074 - AF820800 - sw $2, 2048($28)
+
+  00000078 - 20020800 - addi $2, 2048($0)
+
+  0000007C - AF820408 - sw $2, 1032($28)
+
+  00000080 - 2004014C - addi $4, 332($0)
+
+  00000084 - C0800000 - prints $4
+
+  00000088 - 8F840408 - lw $4, 1032($28)
+
+  0000008C - C0800000 - prints $4
+
+  00000090 - 2004016C - addi $4, 364($0)
+
+  00000094 - C0800000 - prints $4
+
+  00000098 - FC000000 - halt'
+out_code_text_bin: !!binary |
+  oA8dIAAAHCAAAQQgAACAwAR/CIwWAAARAAACIAAEgq8ECAkgBASJrwR/CIwMAAARCH8IjPb/CSEJ
+  ACARBASJjwAAKK0EBImPBAApIQQEia8ABIiPAQAIIQAEiK8KAAAIAASIjwAIiK8ACAIgHwAACAAA
+  AiAACIKvAAgCIAgEgq9MAQQgAACAwAgEhI8AAIDAbAEEIAAAgMAAAAD8
+out_code_data_bin: !!binary |
+  EgAAAFcAAABoAAAAYQAAAHQAAAAgAAAAaQAAAHMAAAAgAAAAeQAAAG8AAAB1AAAAcgAAACAAAABu
+  AAAAYQAAAG0AAABlAAAAPwAAAAcAAABIAAAAZQAAAGwAAABsAAAAbwAAACwAAAAgAAAAAQAAACEA
+  AAA=
+out_stdout: What is your name?Hello, Alice!
+out_log: 'T00001 uPC=00 PC=0000 fetch_pc $v0=0
+
+  T00002 uPC=01 PC=0000 fetch_inst $v0=0
+
+  T00003 uPC=02 PC=0000 decode $v0=0
+
+  T00004 uPC=13 PC=0000 addi $v0=0
+
+  T00005 uPC=14 PC=0000 ADDI_to_epilogue $v0=0
+
+  T00006 uPC=34 PC=0000 pc_epilogue $v0=0
+
+  T00007 uPC=00 PC=0001 fetch_pc $v0=0
+
+  T00008 uPC=01 PC=0001 fetch_inst $v0=0
+
+  T00009 uPC=02 PC=0001 decode $v0=0
+
+  T00010 uPC=13 PC=0001 addi $v0=0
+
+  T00011 uPC=14 PC=0001 ADDI_to_epilogue $v0=0
+
+  T00012 uPC=34 PC=0001 pc_epilogue $v0=0
+
+  T00013 uPC=00 PC=0002 fetch_pc $v0=0
+
+  T00014 uPC=01 PC=0002 fetch_inst $v0=0
+
+  T00015 uPC=02 PC=0002 decode $v0=0
+
+  ...
+
+  T00186 uPC=00 PC=0014 fetch_pc $v0=0
+
+  T00187 uPC=01 PC=0014 fetch_inst $v0=0
+
+  T00188 uPC=02 PC=0014 decode $v0=0
+
+  T00189 uPC=19 PC=0014 beq $v0=0
+
+  T00190 uPC=20 PC=0014 BEQ_to_epilogue $v0=0
+
+  T00191 uPC=34 PC=0014 pc_epilogue $v0=0
+
+  T00192 uPC=00 PC=0015 fetch_pc $v0=0
+
+  T00193 uPC=01 PC=0015 fetch_inst $v0=0
+
+  T00194 uPC=02 PC=0015 decode $v0=0
+
+  T00195 uPC=15 PC=0015 lw $v0=0
+
+  T00196 uPC=16 PC=0015 LW_to_epilogue $v0=0
+
+  T00197 uPC=34 PC=0015 pc_epilogue $v0=0
+
+  T00198 uPC=00 PC=0016 fetch_pc $v0=0
+
+  T00199 uPC=01 PC=0016 fetch_inst $v0=0
+
+  T00200 uPC=02 PC=0016 decode $v0=0
+
+  TOTAL_TICKS=606'
+expected_output: What is your name?Hello, Alice!
+input: 'Alice
+
+  '

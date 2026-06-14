@@ -1,0 +1,298 @@
+in_source: "(setq a_lo 1)\n(setq a_hi 0)\n(setq b_lo 4294967295)\n(setq b_hi 0)\n\n\
+  (setq sum_lo (+ a_lo b_lo))\n(setq sum_hi (+ a_hi b_hi))\n(if (< sum_lo a_lo)\n\
+  \    (setq sum_hi (+ sum_hi 1))\n    0)\n\n(print sum_lo)\n(print sum_hi)\n"
+in_stdin: ''
+out_code_asm: '.text
+
+  main:
+
+  ADDI $sp, $zero, 4000
+
+  ADDI $gp, $zero, 0
+
+  ADDI $v0, $zero, 1
+
+  SW $v0, 1024($gp)
+
+  ADDI $v0, $zero, 0
+
+  SW $v0, 1028($gp)
+
+  LW $v0, 256($zero)
+
+  SW $v0, 1032($gp)
+
+  ADDI $v0, $zero, 0
+
+  SW $v0, 1036($gp)
+
+  LW $v0, 1024($gp)
+
+  ADDI $sp, $sp, -4
+
+  SW $v0, 0($sp)
+
+  LW $v0, 1032($gp)
+
+  LW $t0, 0($sp)
+
+  ADDI $sp, $sp, 4
+
+  ADD $v0, $t0, $v0
+
+  SW $v0, 1040($gp)
+
+  LW $v0, 1028($gp)
+
+  ADDI $sp, $sp, -4
+
+  SW $v0, 0($sp)
+
+  LW $v0, 1036($gp)
+
+  LW $t0, 0($sp)
+
+  ADDI $sp, $sp, 4
+
+  ADD $v0, $t0, $v0
+
+  SW $v0, 1044($gp)
+
+  LW $v0, 1040($gp)
+
+  ADDI $sp, $sp, -4
+
+  SW $v0, 0($sp)
+
+  LW $v0, 1024($gp)
+
+  LW $t0, 0($sp)
+
+  ADDI $sp, $sp, 4
+
+  SLT $v0, $t0, $v0
+
+  BEQ $v0, $zero, if_else_0
+
+  LW $v0, 1044($gp)
+
+  ADDI $sp, $sp, -4
+
+  SW $v0, 0($sp)
+
+  ADDI $v0, $zero, 1
+
+  LW $t0, 0($sp)
+
+  ADDI $sp, $sp, 4
+
+  ADD $v0, $t0, $v0
+
+  SW $v0, 1044($gp)
+
+  J if_end_1
+
+  if_else_0:
+
+  ADDI $v0, $zero, 0
+
+  if_end_1:
+
+  LW $v0, 1040($gp)
+
+  ADD $a0, $v0, $zero
+
+  OUTNUM $a0
+
+  LW $v0, 1044($gp)
+
+  ADD $a0, $v0, $zero
+
+  OUTNUM $a0
+
+  HALT
+
+
+  .data
+
+  const_100: .word 4294967295  # @0x100'
+out_code_hex: '00000000 - 201D0FA0 - addi $29, 4000($0)
+
+  00000004 - 201C0000 - addi $28, 0($0)
+
+  00000008 - 20020001 - addi $2, 1($0)
+
+  0000000C - AF820400 - sw $2, 1024($28)
+
+  00000010 - 20020000 - addi $2, 0($0)
+
+  00000014 - AF820404 - sw $2, 1028($28)
+
+  00000018 - 8C020100 - lw $2, 256($0)
+
+  0000001C - AF820408 - sw $2, 1032($28)
+
+  00000020 - 20020000 - addi $2, 0($0)
+
+  00000024 - AF82040C - sw $2, 1036($28)
+
+  00000028 - 8F820400 - lw $2, 1024($28)
+
+  0000002C - 23BDFFFC - addi $29, -4($29)
+
+  00000030 - AFA20000 - sw $2, 0($29)
+
+  00000034 - 8F820408 - lw $2, 1032($28)
+
+  00000038 - 8FA80000 - lw $8, 0($29)
+
+  0000003C - 23BD0004 - addi $29, 4($29)
+
+  00000040 - 01021020 - add $2, $8, $2
+
+  00000044 - AF820410 - sw $2, 1040($28)
+
+  00000048 - 8F820404 - lw $2, 1028($28)
+
+  0000004C - 23BDFFFC - addi $29, -4($29)
+
+  00000050 - AFA20000 - sw $2, 0($29)
+
+  00000054 - 8F82040C - lw $2, 1036($28)
+
+  00000058 - 8FA80000 - lw $8, 0($29)
+
+  0000005C - 23BD0004 - addi $29, 4($29)
+
+  00000060 - 01021020 - add $2, $8, $2
+
+  00000064 - AF820414 - sw $2, 1044($28)
+
+  00000068 - 8F820410 - lw $2, 1040($28)
+
+  0000006C - 23BDFFFC - addi $29, -4($29)
+
+  00000070 - AFA20000 - sw $2, 0($29)
+
+  00000074 - 8F820400 - lw $2, 1024($28)
+
+  00000078 - 8FA80000 - lw $8, 0($29)
+
+  0000007C - 23BD0004 - addi $29, 4($29)
+
+  00000080 - 0102102A - slt $2, $8, $2
+
+  00000084 - 10400009 - beq $0, 9($2)
+
+  00000088 - 8F820414 - lw $2, 1044($28)
+
+  0000008C - 23BDFFFC - addi $29, -4($29)
+
+  00000090 - AFA20000 - sw $2, 0($29)
+
+  00000094 - 20020001 - addi $2, 1($0)
+
+  00000098 - 8FA80000 - lw $8, 0($29)
+
+  0000009C - 23BD0004 - addi $29, 4($29)
+
+  000000A0 - 01021020 - add $2, $8, $2
+
+  000000A4 - AF820414 - sw $2, 1044($28)
+
+  000000A8 - 0800002C - j 44
+
+  000000AC - 20020000 - addi $2, 0($0)
+
+  000000B0 - 8F820410 - lw $2, 1040($28)
+
+  000000B4 - 00402020 - add $4, $2, $0
+
+  000000B8 - C4800000 - outnum $4
+
+  000000BC - 8F820414 - lw $2, 1044($28)
+
+  000000C0 - 00402020 - add $4, $2, $0
+
+  000000C4 - C4800000 - outnum $4
+
+  000000C8 - FC000000 - halt'
+out_code_text_bin: !!binary |
+  oA8dIAAAHCABAAIgAASCrwAAAiAEBIKvAAECjAgEgq8AAAIgDASCrwAEgo/8/70jAACirwgEgo8A
+  AKiPBAC9IyAQAgEQBIKvBASCj/z/vSMAAKKvDASCjwAAqI8EAL0jIBACARQEgq8QBIKP/P+9IwAA
+  oq8ABIKPAACojwQAvSMqEAIBCQBAEBQEgo/8/70jAACirwEAAiAAAKiPBAC9IyAQAgEUBIKvLAAA
+  CAAAAiAQBIKPICBAAAAAgMQUBIKPICBAAAAAgMQAAAD8
+out_code_data_bin: !!binary |
+  /////w==
+out_stdout: '01
+
+  '
+out_log: 'T00001 uPC=00 PC=0000 fetch_pc $v0=0
+
+  T00002 uPC=01 PC=0000 fetch_inst $v0=0
+
+  T00003 uPC=02 PC=0000 decode $v0=0
+
+  T00004 uPC=13 PC=0000 addi $v0=0
+
+  T00005 uPC=14 PC=0000 ADDI_to_epilogue $v0=0
+
+  T00006 uPC=34 PC=0000 pc_epilogue $v0=0
+
+  T00007 uPC=00 PC=0001 fetch_pc $v0=0
+
+  T00008 uPC=01 PC=0001 fetch_inst $v0=0
+
+  T00009 uPC=02 PC=0001 decode $v0=0
+
+  T00010 uPC=13 PC=0001 addi $v0=0
+
+  T00011 uPC=14 PC=0001 ADDI_to_epilogue $v0=0
+
+  T00012 uPC=34 PC=0001 pc_epilogue $v0=0
+
+  T00013 uPC=00 PC=0002 fetch_pc $v0=0
+
+  T00014 uPC=01 PC=0002 fetch_inst $v0=0
+
+  T00015 uPC=02 PC=0002 decode $v0=0
+
+  ...
+
+  T00186 uPC=34 PC=0030 pc_epilogue $v0=1
+
+  T00187 uPC=00 PC=0031 fetch_pc $v0=1
+
+  T00188 uPC=01 PC=0031 fetch_inst $v0=1
+
+  T00189 uPC=02 PC=0031 decode $v0=1
+
+  T00190 uPC=13 PC=0031 addi $v0=1
+
+  T00191 uPC=14 PC=0031 ADDI_to_epilogue $v0=1
+
+  T00192 uPC=34 PC=0031 pc_epilogue $v0=1
+
+  T00193 uPC=00 PC=0032 fetch_pc $v0=1
+
+  T00194 uPC=01 PC=0032 fetch_inst $v0=1
+
+  T00195 uPC=02 PC=0032 decode $v0=1
+
+  T00196 uPC=11 PC=0032 slt $v0=1
+
+  T00197 uPC=12 PC=0032 SLT_to_epilogue $v0=1
+
+  T00198 uPC=34 PC=0032 pc_epilogue $v0=1
+
+  T00199 uPC=00 PC=0033 fetch_pc $v0=1
+
+  T00200 uPC=01 PC=0033 fetch_inst $v0=1
+
+  TOTAL_TICKS=298'
+expected_output: '0
+
+  1
+
+  '
+input: ''

@@ -1,0 +1,101 @@
+in_source: '(print "Hello, World!")
+
+  '
+in_stdin: ''
+out_code_asm: '.text
+
+  main:
+
+  ADDI $sp, $zero, 4000
+
+  ADDI $gp, $zero, 0
+
+  ADDI $a0, $zero, 256
+
+  PRINTS $a0
+
+  HALT
+
+
+  .data
+
+  str_0: .pascal "Hello, World!"  # @0x100'
+out_code_hex: '00000000 - 201D0FA0 - addi $29, 4000($0)
+
+  00000004 - 201C0000 - addi $28, 0($0)
+
+  00000008 - 20040100 - addi $4, 256($0)
+
+  0000000C - C0800000 - prints $4
+
+  00000010 - FC000000 - halt'
+out_code_text_bin: !!binary |
+  oA8dIAAAHCAAAQQgAACAwAAAAPw=
+out_code_data_bin: !!binary |
+  DQAAAEgAAABlAAAAbAAAAGwAAABvAAAALAAAACAAAABXAAAAbwAAAHIAAABsAAAAZAAAACEAAAA=
+out_stdout: Hello, World!
+out_log: 'T00001 uPC=00 PC=0000 fetch_pc $v0=0
+
+  T00002 uPC=01 PC=0000 fetch_inst $v0=0
+
+  T00003 uPC=02 PC=0000 decode $v0=0
+
+  T00004 uPC=13 PC=0000 addi $v0=0
+
+  T00005 uPC=14 PC=0000 ADDI_to_epilogue $v0=0
+
+  T00006 uPC=34 PC=0000 pc_epilogue $v0=0
+
+  T00007 uPC=00 PC=0001 fetch_pc $v0=0
+
+  T00008 uPC=01 PC=0001 fetch_inst $v0=0
+
+  T00009 uPC=02 PC=0001 decode $v0=0
+
+  T00010 uPC=13 PC=0001 addi $v0=0
+
+  T00011 uPC=14 PC=0001 ADDI_to_epilogue $v0=0
+
+  T00012 uPC=34 PC=0001 pc_epilogue $v0=0
+
+  T00013 uPC=00 PC=0002 fetch_pc $v0=0
+
+  T00014 uPC=01 PC=0002 fetch_inst $v0=0
+
+  T00015 uPC=02 PC=0002 decode $v0=0
+
+  ...
+
+  T00025 uPC=29 PC=0003 prints $v0=0
+
+  T00026 uPC=29 PC=0003 prints $v0=0
+
+  T00027 uPC=29 PC=0003 prints $v0=0
+
+  T00028 uPC=29 PC=0003 prints $v0=0
+
+  T00029 uPC=29 PC=0003 prints $v0=0
+
+  T00030 uPC=29 PC=0003 prints $v0=0
+
+  T00031 uPC=29 PC=0003 prints $v0=0
+
+  T00032 uPC=29 PC=0003 prints $v0=0
+
+  T00033 uPC=29 PC=0003 prints $v0=0
+
+  T00034 uPC=29 PC=0003 prints $v0=0
+
+  T00035 uPC=30 PC=0003 PRINTS_to_epilogue $v0=0
+
+  T00036 uPC=34 PC=0003 pc_epilogue $v0=0
+
+  T00037 uPC=00 PC=0004 fetch_pc $v0=0
+
+  T00038 uPC=01 PC=0004 fetch_inst $v0=0
+
+  T00039 uPC=02 PC=0004 decode $v0=0
+
+  TOTAL_TICKS=39'
+expected_output: Hello, World!
+input: ''

@@ -1,0 +1,140 @@
+in_source: '(setq code_addr 0)
+
+  (setq data_addr 256)
+
+  (print code_addr)
+
+  (print data_addr)
+
+  '
+in_stdin: ''
+out_code_asm: '.text
+
+  main:
+
+  ADDI $sp, $zero, 4000
+
+  ADDI $gp, $zero, 0
+
+  ADDI $v0, $zero, 0
+
+  SW $v0, 1024($gp)
+
+  ADDI $v0, $zero, 256
+
+  SW $v0, 1028($gp)
+
+  LW $v0, 1024($gp)
+
+  ADD $a0, $v0, $zero
+
+  OUTNUM $a0
+
+  LW $v0, 1028($gp)
+
+  ADD $a0, $v0, $zero
+
+  OUTNUM $a0
+
+  HALT'
+out_code_hex: '00000000 - 201D0FA0 - addi $29, 4000($0)
+
+  00000004 - 201C0000 - addi $28, 0($0)
+
+  00000008 - 20020000 - addi $2, 0($0)
+
+  0000000C - AF820400 - sw $2, 1024($28)
+
+  00000010 - 20020100 - addi $2, 256($0)
+
+  00000014 - AF820404 - sw $2, 1028($28)
+
+  00000018 - 8F820400 - lw $2, 1024($28)
+
+  0000001C - 00402020 - add $4, $2, $0
+
+  00000020 - C4800000 - outnum $4
+
+  00000024 - 8F820404 - lw $2, 1028($28)
+
+  00000028 - 00402020 - add $4, $2, $0
+
+  0000002C - C4800000 - outnum $4
+
+  00000030 - FC000000 - halt'
+out_code_text_bin: !!binary |
+  oA8dIAAAHCAAAAIgAASCrwABAiAEBIKvAASCjyAgQAAAAIDEBASCjyAgQAAAAIDEAAAA/A==
+out_code_data_bin: !!binary |
+  AAAAAA==
+out_stdout: '0256
+
+  '
+out_log: 'T00001 uPC=00 PC=0000 fetch_pc $v0=0
+
+  T00002 uPC=01 PC=0000 fetch_inst $v0=0
+
+  T00003 uPC=02 PC=0000 decode $v0=0
+
+  T00004 uPC=13 PC=0000 addi $v0=0
+
+  T00005 uPC=14 PC=0000 ADDI_to_epilogue $v0=0
+
+  T00006 uPC=34 PC=0000 pc_epilogue $v0=0
+
+  T00007 uPC=00 PC=0001 fetch_pc $v0=0
+
+  T00008 uPC=01 PC=0001 fetch_inst $v0=0
+
+  T00009 uPC=02 PC=0001 decode $v0=0
+
+  T00010 uPC=13 PC=0001 addi $v0=0
+
+  T00011 uPC=14 PC=0001 ADDI_to_epilogue $v0=0
+
+  T00012 uPC=34 PC=0001 pc_epilogue $v0=0
+
+  T00013 uPC=00 PC=0002 fetch_pc $v0=0
+
+  T00014 uPC=01 PC=0002 fetch_inst $v0=0
+
+  T00015 uPC=02 PC=0002 decode $v0=0
+
+  ...
+
+  T00064 uPC=03 PC=0010 add $v0=256
+
+  T00065 uPC=04 PC=0010 ADD_to_epilogue $v0=256
+
+  T00066 uPC=34 PC=0010 pc_epilogue $v0=256
+
+  T00067 uPC=00 PC=0011 fetch_pc $v0=256
+
+  T00068 uPC=01 PC=0011 fetch_inst $v0=256
+
+  T00069 uPC=02 PC=0011 decode $v0=256
+
+  T00070 uPC=31 PC=0011 outnum $v0=256
+
+  T00071 uPC=31 PC=0011 outnum $v0=256
+
+  T00072 uPC=31 PC=0011 outnum $v0=256
+
+  T00073 uPC=31 PC=0011 outnum $v0=256
+
+  T00074 uPC=32 PC=0011 OUTNUM_to_epilogue $v0=256
+
+  T00075 uPC=34 PC=0011 pc_epilogue $v0=256
+
+  T00076 uPC=00 PC=0012 fetch_pc $v0=256
+
+  T00077 uPC=01 PC=0012 fetch_inst $v0=256
+
+  T00078 uPC=02 PC=0012 decode $v0=256
+
+  TOTAL_TICKS=78'
+expected_output: '0
+
+  256
+
+  '
+input: ''
