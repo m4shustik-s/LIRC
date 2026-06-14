@@ -7,8 +7,8 @@ from io import SEEK_SET, TextIOBase
 
 
 class TokenParseError(Exception):
-    def __init__(self) -> None:
-        super().__init__("Failed while parsing token")
+    def __init__(self, msg: str = "Failed while parsing token") -> None:
+        super().__init__(msg)
 
 
 def parse_keyword(keyword: str, text: TextIOBase) -> str:
@@ -32,32 +32,38 @@ def parse_space(text: TextIOBase) -> str:
 
 
 def parse_num(text: TextIOBase) -> str:
-    res = ""
+    pos = text.tell()
     cur = text.read(1)
-    if cur.isdecimal():
-        res += cur
-        pos = text.tell()
-        cur = text.read(1)
-        while cur.isdecimal():
-            res += cur
-            pos = text.tell()
-            cur = text.read(1)
-        else:
+    if cur not in "0123456789-" and cur != "-":
+        return ""
+    if cur == "-":
+        nxt = text.read(1)
+        if not nxt.isdecimal():
             text.seek(pos, SEEK_SET)
+            return ""
+        res = "-" + nxt
+    else:
+        res = cur
+    p = text.tell()
+    cur = text.read(1)
+    while cur.isdecimal():
+        res += cur
+        p = text.tell()
+        cur = text.read(1)
+    text.seek(p, SEEK_SET)
     return res
 
 
 def parse_string(text: TextIOBase) -> str:
-    res = ""
     start = text.read(1)
-    if start == '"':
+    if start != '"':
+        return ""
+    res = ""
+    cur = text.read(1)
+    while cur and cur != '"':
+        res += cur
         cur = text.read(1)
-        while cur and cur != '"':
-            res += cur
-            cur = text.read(1)
-        if cur != '"':
-            return ""
-    return res
+    return res if cur == '"' else ""
 
 
 def parse_var(text: TextIOBase) -> str:
@@ -67,12 +73,11 @@ def parse_var(text: TextIOBase) -> str:
         res += cur
         pos = text.tell()
         cur = text.read(1)
-        while cur.isalnum() or cur == "_":
+        while cur.isalnum() or cur in "_-":
             res += cur
             pos = text.tell()
             cur = text.read(1)
-        else:
-            text.seek(pos, SEEK_SET)
+        text.seek(pos, SEEK_SET)
     return res
 
 
@@ -113,7 +118,6 @@ class TokenType(enum.Enum):
             assert rule is not None
             self._rule = rule
         else:
-            self._keyword = keyword
             self._rule = partial(parse_keyword, keyword)
 
 
@@ -123,20 +127,13 @@ class Token:
         self.value = value
         self.line = line
 
-    def __str__(self) -> str:
-        return self.token_type.name
-
 
 class Tokenizer:
     def __init__(self, text: TextIOBase) -> None:
         self.text = text
-        self.stack: list[Token] = []
-        self.line = 0
+        self.line = 1
 
     def get_next_token(self) -> Token:
-        if self.stack:
-            return self.stack.pop()
-
         for token_type in TokenType:
             pos = self.text.tell()
             val = token_type._rule(self.text)
@@ -144,13 +141,13 @@ class Tokenizer:
                 return Token(token_type, val, self.line)
             self.text.seek(pos, SEEK_SET)
 
-        pos = self.text.tell()
         cur = self.text.read(1)
-        if cur.isspace():
-            if cur == "\n":
-                self.line += 1
-            return self.get_next_token()
         if cur == "":
             return Token(TokenType.EOF, "", self.line)
-        self.text.seek(pos, SEEK_SET)
-        raise TokenParseError
+        if cur == "\n":
+            self.line += 1
+            return self.get_next_token()
+        if cur.isspace():
+            return self.get_next_token()
+        msg = f"Unexpected character: {cur!r} at line {self.line}"
+        raise TokenParseError(msg)
