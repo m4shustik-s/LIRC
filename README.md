@@ -226,3 +226,12 @@
 ### Запуск тестов
 
     pytest -v tests/test_integration.py
+
+## CI
+ 
+GitHub Actions (`.github/workflows/ci.yml`) на каждый push/PR запускает `ruff check`, `mypy src` и `pytest`. Те же проверки локально:
+ 
+    poetry run ruff check .
+    poetry run mypy src
+    poetry run pytest -m "not slow"
+    poetry run pytest -m slow   # долгие тесты (prob1)
