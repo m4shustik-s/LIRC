@@ -135,3 +135,4 @@ class DataPath:
         self.data_mem.write_word(0x00007F00, ch)
         st["pos"] += 1
         return st["pos"] >= st["len"]
+    

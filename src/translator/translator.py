@@ -296,3 +296,4 @@ class Translator:
         self.emit(f"SW $t0, {var_off}($gp)")
         self.emit(f"J {label_loop}")
         self.emit(f"{label_end}:")
+        

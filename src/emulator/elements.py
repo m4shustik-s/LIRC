@@ -149,3 +149,4 @@ class ALU:
             result = _ARITH_OPS[op_type](self.left_input, self.right_input)
             return int(result) & 0xFFFFFFFF
         return 0
+    
