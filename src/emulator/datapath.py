@@ -53,7 +53,9 @@ class DataPath:
             st["pos"] = 0
         digits_list = st["digits"]
         assert isinstance(digits_list, list)
-        pos = int(st["pos"])
+        pos_raw = st["pos"]
+        assert isinstance(pos_raw, int)
+        pos = pos_raw
         if pos >= len(digits_list):
             self.data_mem.write_word(0x00007F00, 10)
             self.outnum_state = {}

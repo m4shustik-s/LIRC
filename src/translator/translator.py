@@ -100,8 +100,8 @@ class Translator:
             if not self.strings:
                 asm.append("")
                 asm.append(".data")
-            for val, addr in sorted(self.constants.items(), key=lambda item: item[1]):
-                asm.append(f"const_{addr:X}: .word {val}  # @0x{addr:X}")
+            for const_val, addr in sorted(self.constants.items(), key=lambda item: item[1]):
+                asm.append(f"const_{addr:X}: .word {const_val}  # @0x{addr:X}")
         return "\n".join(asm)
 
     def _compile_defun(self, node: Defun) -> None:

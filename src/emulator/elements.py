@@ -1,19 +1,28 @@
 from __future__ import annotations
 
 import operator
+from collections.abc import Callable
 from enum import Enum
 
 from src.config import IOMemoryMapping
 
 
 class ALU_OP(Enum):
-    ADD = operator.add
-    SUB = operator.sub
-    MUL = operator.mul
-    DIV = operator.floordiv
+    ADD = "ADD"
+    SUB = "SUB"
+    MUL = "MUL"
+    DIV = "DIV"
     SLT = "SLT"
     EQ = "EQ"
     PASS = "PASS"
+
+
+_ARITH_OPS: dict[ALU_OP, Callable[[int, int], int]] = {
+    ALU_OP.ADD: operator.add,
+    ALU_OP.SUB: operator.sub,
+    ALU_OP.MUL: operator.mul,
+    ALU_OP.DIV: operator.floordiv,
+}
 
 
 class MUX:
@@ -134,9 +143,9 @@ class ALU:
             return 1 if self.left_input < self.right_input else 0
         if op_type == ALU_OP.EQ:
             return 1 if self.left_input == self.right_input else 0
-        if isinstance(op_type, ALU_OP):
+        if isinstance(op_type, ALU_OP) and op_type in _ARITH_OPS:
             if op_type == ALU_OP.DIV and self.right_input == 0:
                 return 0
-            result = op_type.value(self.left_input, self.right_input)
+            result = _ARITH_OPS[op_type](self.left_input, self.right_input)
             return int(result) & 0xFFFFFFFF
         return 0
