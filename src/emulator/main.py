@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from src.emulator.cu import format_log_excerpt, load_binary, load_data_binary, run_emulator
+from src.emulator.cu import format_log_excerpt, run_emulator
 
 
 def main() -> None:

@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 from src.emulator.datapath import DataPath
 from src.emulator.elements import ALU_OP
-from src.isa import Opcode
 
 
 @dataclass

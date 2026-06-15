@@ -52,7 +52,6 @@ def test_sort() -> None:
 
 @pytest.mark.slow
 def test_prob1() -> None:
-    golden = load_golden("prob1")
     result = run_program("prob1", log_limit=100, max_ticks=100_000_000)
     print(f"Лог симуляции:\n{result["log_excerpt"]}\n")
     print(f"Вывод:\n{result["output"]}\n")
@@ -61,7 +60,6 @@ def test_prob1() -> None:
 
 
 def test_int64() -> None:
-    golden = load_golden("int64")
     result = run_program("int64")
     print(f"Лог симуляции:\n{result["log_excerpt"]}\n")
     print(f"Вывод:\n{result["output"]}\n")
@@ -70,14 +68,13 @@ def test_int64() -> None:
 
 
 def test_harvard_check() -> None:
-    golden = load_golden("harvard_check")
     result = run_program("harvard_check")
     print(f"Лог симуляции:\n{result["log_excerpt"]}\n")
     print(f"Вывод:\n{result["output"]}\n")
     print(f"Ассемблер:\n{result["asm"]}\n")
     assert "0" in result["output"]
     assert "256" in result["output"]
-    
+
 
 def test_imports() -> None:
     import src.emulator.cu  # noqa: F401

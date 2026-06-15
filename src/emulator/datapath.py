@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from src.emulator.elements import (
     ALU,
-    ALU_OP,
+    MUX,
     DataMemory,
     InstructionMemory,
-    MUX,
     Register,
     Registers,
     StreamIO,
