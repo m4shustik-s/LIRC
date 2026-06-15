@@ -100,4 +100,3 @@ def test_microcode_rom() -> None:
 
     assert "ADD" in mc_dispatch
     assert len(mc_rom) > 20
-    
